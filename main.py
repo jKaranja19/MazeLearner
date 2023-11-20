@@ -4,7 +4,7 @@ import math
 from movement import movement
 
 pg.init()
-screen = pg.display.set_mode((800, 600))
+screen = pg.display.set_mode((800, 800))
 clock = pg.time.Clock()
 font = pg.font.SysFont("Arial", 20, 1)
 pg.mouse.set_visible(False)
