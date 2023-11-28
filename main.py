@@ -1,7 +1,8 @@
 import pygame as pg
-import math
+import math, tasks, random
 
 from movement import movement
+
 
 pg.init()
 screen = pg.display.set_mode((800, 800))
@@ -11,7 +12,7 @@ pg.mouse.set_visible(False)
 
 running = True
 size = 6
-map = [[1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1],
+mapa = [[1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 0, 1,1, 0, 1, 0, 0, 1,],
         [1, 0, 1, 0, 0, 0,0, 0, 1, 0, 0, 1,],
         [1, 0, 0, 0, 0, 1,1, 0, 0, 0, 0, 1],
@@ -22,13 +23,42 @@ vertical_res = int(horizontal_res * 0.75)
 frame = pg.Surface([horizontal_res, vertical_res])
 mod = 60 / horizontal_res
 pg.event.set_grab(1)
-wall = pg.image.load('images2.jpeg').convert()
-sky = pg.transform.smoothscale(pg.image.load('skybox.jpg').convert(), (12 * horizontal_res, vertical_res))
+wall = pg.image.load(f'{tasks.IMAGE_PATH}/images2.jpeg').convert()
+sky = pg.transform.smoothscale(pg.image.load(f'{tasks.IMAGE_PATH}/skybox.jpg').convert(), (12 * horizontal_res, vertical_res))
+
+#my code 
+# Set up display
+width, height = 800, 600
+screen = pg.display.set_mode((width, height))
+
+#screen display title
+pg.display.set_caption("Maze Learner")
+
+# custom font 
+font = pg.font.Font(f'{tasks.FONT_PATH}/mario.ttf', 36)
+
+# word = "KIPUNJI"
+
+#access the json file that contains the words 
+words=tasks.read_json(f'{tasks.JS_PATH}/words')
+
+# generate a random index
+random_index=random.randint(0,len(words))
+
+#pick a random word 
+word=words[f'{random_index}']
+
+# letters=list(word)
+
+# print(letters)
+
+text = font.render(word, True, (255, 255, 255))
+
 
 while running:
     elapsed_time = clock.tick(60) / 1000  # Use a fixed frame rate (60 FPS)
 
-    posx, posy, rot = movement(posx, posy, rot, map, 2 * elapsed_time)
+    posx, posy, rot = movement(posx, posy, rot, mapa, 2 * elapsed_time)
 
     fps = str(round(clock.get_fps(), 1))
     frame.blit(sky, (-math.degrees(rot % (2 * math.pi) * horizontal_res / 60), 0))
@@ -45,7 +75,7 @@ while running:
         while True:  # ray loop
             x, y = (x + cos, y + sin)
             n += 1
-            if map[int(x)][int(y)] != 0:
+            if mapa[int(x)][int(y)] != 0:
                 h = vertical_res * (1 / (0.02 * n * math.cos(math.radians(i * mod - 30))))
                 xx = x % 1
                 if xx < 0.05 or xx > 0.95:
@@ -60,6 +90,18 @@ while running:
     upscaled.blit(font.render(fps, 1, [255, 255, 255]), [0, 0])
     screen.blit(upscaled, (0, 0))
 
+    # my code starts 
+    # Clear the screen
+    # screen.fill((1, 1, 1))
+     # Blit the text onto the screen
+    screen.blit(text, (width // 2 - text.get_width() // 2, height // 2 - text.get_height() // 2))
+
+    # Update the display
+    # pg.display.flip()
+
+    #my code ends
+
     pg.display.update()
+
 
 pg.quit()
